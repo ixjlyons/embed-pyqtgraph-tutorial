@@ -14,7 +14,7 @@ Here is a list of the files here with a description of what they are doing:
 
 
 
-.. image:: misc/screenshot.png
+.. image:: screenshot.png
 
 
 Prerequisites
