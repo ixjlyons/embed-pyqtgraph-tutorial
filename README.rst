@@ -10,9 +10,8 @@ using the following steps:
 * Write a custom QWidget class which takes on the UI and populates the embedded
   pyqtgraph widget (``application.py``)
 
-Here is a list of the files here with a description of what they are doing:
-
-
+The example provided displays a `PlotWidget`_ with some data and a QCheckBox to
+enable/disable mouse control of the plot.
 
 .. image:: screenshot.png
 
@@ -112,6 +111,7 @@ programmatically.*
 
 
 .. _pyqtgraph: http://pyqtgraph.org/
+.. _PlotWidget: http://pyqtgraph.org/documentation/widgets/plotwidget.html?highlight=plotwidget#pyqtgraph.PlotWidget
 .. _pyqtgraph examples: https://github.com/pyqtgraph/pyqtgraph/tree/develop/examples
 .. _embed pyqtgraph: http://pyqtgraph.org/documentation/how_to_use.html#embedding-widgets-inside-pyqt-applications
 .. _promote: https://doc.qt.io/qt-4.8/designer-using-custom-widgets.html
