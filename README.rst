@@ -1,5 +1,5 @@
-pyqtgraph-embed
-===============
+embed-pyqtgraph-tutorial
+========================
 
 This is a walkthrough of how to embed pyqtgraph_ in your PyQt applications
 using the following steps:
