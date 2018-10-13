@@ -5,7 +5,7 @@ extension instead of `.ui`.
 """
 
 import os
-from PyQt4 import uic
+from PyQt5 import uic
 
 SRC = '.'
 DEST = '.'

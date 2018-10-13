@@ -1,39 +1,51 @@
+========================
 embed-pyqtgraph-tutorial
 ========================
 
-This is a walkthrough of how to embed pyqtgraph_ in your PyQt applications
-using the following steps:
+This is a walkthrough of embedding pyqtgraph_ content in a PyQt application
+you're designing with Qt Designer. Here's an overview of the steps involved:
 
 * Create the layout of the UI in Qt Designer (generates ``template.ui``)
-* Compile the resulting XML to Python source (uses ``build_ui.py`` to generate
+* Compile the XML template to Python source (uses ``build_ui.py`` to generate
   ``template.py``)
 * Write a custom QWidget class which takes on the UI and populates the embedded
   pyqtgraph widget (``application.py``)
 
 The example provided displays a `PlotWidget`_ with some data and a QCheckBox to
-enable/disable mouse control of the plot.
+enable/disable mouse control of the plot. It's a simple example, but once
+you've seen the process of adding pyqtgraph widgets to your UI, you can create
+arbitrarily complex applications without having to write a ton of boilerplate
+layout code.
 
 .. image:: screenshot.png
 
 
 Prerequisites
--------------
+=============
 
 I'm going to assume you have some way of creating Qt applications with Python,
-and the instructions should not be much (if at all) different between the ways
-to accomplish that (i.e. PyQt4, PyQt5, and PySide). For reference, I'm using
-PyQt4.
+and the instructions here should not be much (if at all) different between the
+ways to accomplish that (i.e. PyQt4, PyQt5, PySide, PySide2). For reference,
+I'm using PyQt5 and Python 3, so the following works for setting up an
+environment for running the example::
 
-I'm also going to assume you have pyqtgraph installed and have some knowledge
-of how to use it. The `pyqtgraph examples`_ cover the capabilities of pyqtgraph
-pretty well.
+   $ python -m venv .venv
+   $ source .venv/bin/activate
+   (.venv) $ pip install pyqt5 pyqtgraph
+   (.venv) $ python application.py
+
+If you're using a different setup (e.g. PyQt4, PySide), you'll need to fix some
+imports before being able to run the example application.
+
+I'm also going to assume you have have some knowledge of how to use pyqtgraph.
+The `pyqtgraph examples`_ cover its capabilities pretty well.
 
 
 Tutorial
---------
+========
 
 Creating the UI Layout
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 ::
 
@@ -41,11 +53,13 @@ Creating the UI Layout
     │ creativity │ → │ Qt Designer │ → │ template.ui │
     └────────────┘   └─────────────┘   └─────────────┘
 
-Generally, you use custom widget implementations in Qt Designer through the
-`promote`_ mechanism. Since we're using Python instead of C++, the "Header
-file" in this case is going to be the Python namespace at which you would
-access the class as though you were importing it. For example, if you had
-a custom widget class, where an import statement might look like:
+Generally, you can use custom widgets in Qt Designer through the `promote`_
+mechanism. This means you add an item of the base class of your custom item to
+your UI layout, right click on it, then go to "Promote to ...". Since we're
+using Python instead of C++, the "Header file" in this case is going to be the
+Python namespace at which you would access the class as though you were
+importing it. For example, if you had a custom widget class, where an import
+statement might look like:
 
 .. code:: python
 
@@ -56,14 +70,23 @@ you would put ``myproject.widgets`` in the "Header file" field and
 inherit from (e.g. QDialog, QWidget, etc.) is then the "Base class name."
 
 pyqtgraph actually provides some documentation for how to embed plotting
-objects into a Qt UI using Qt Designer (see `embed pyqtgraph`_). The basic idea
-is that you lay out your UI with your plot(s) represented as QGraphicsView. You
-then use the above instructions for promoting it to a pyqtgraph class.
-pyqtgraph makes this simple by including pretty much everything in the
-pyqtgraph namespace, so you just put ``pyqtgraph`` in the "Header file" field.
+objects into a Qt UI using Qt Designer (see `embed pyqtgraph`_), but it's a bit
+lacking. In our case, add a QGraphicsView to the layout where you want the plot
+to be, then promote it to a PlotWidget. Most pyqtgraph classes are available
+under the pyqtgraph namespace, so just put "pyqtgraph" in the header file
+field.
+
+If you inspect the ``template.ui`` file, you can see towards the bottom there
+is a ``customwidget`` section specifying everything we just covered:
+
+========== ==============
+class      PlotWidget
+base class QGraphicsView
+namespace  pyqtgraph
+========== ==============
 
 Compiling the Layout
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 ::
 
@@ -82,16 +105,34 @@ make importing simple (see the next step).
 
 You could instead use ``pyuic`` directly from the command line. For single UI
 templates, this is fine, but you'll want a scripted approach if you end up with
-more.
+more. For reference, here's how you'd convert the template given here::
 
-The third option would be to use the UI template directly (i.e. using
-``uic.loadUI()``). I tend to avoid this to make packaging the project easier,
-but it is probably not all that difficult to package the UI templates. If
-you're already dealing with packaging custom icon files and such, this would be
-a non-issue.
+   (.venv) $ pyuic5 template.ui -o template.py
+
+The third option would be to use the UI template directly from your
+hand-written Python code (i.e. using ``uic.loadUI()``). I tend to avoid this to
+make packaging the project easier, but it is probably not all that difficult to
+package the UI templates. If you're already dealing with packaging custom icon
+files and such, this would be a non-issue.
+
+Now, if you take a look at the ``template.py`` file, you'll see there's a class
+called ``Ui_CustomWidget`` that has, primarily, a ``setupUi`` method to create
+and lay out all of the content we designed in Qt Designer. This is a pretty
+simple example, but with complex layouts with many items, the use of Qt
+Designer and automatic generation of this code really shines.
+
+Also notice the import line at the bottom of the file:
+
+.. code-block:: python
+
+    from pyqtgraph impot PlotWidget
+
+This all comes straight from that bottom section of the ``template.ui`` file,
+where we specified in Qt Designer that we have a custom item of a specific
+class and where it can be found.
 
 Wrapping the UI in a Custom QWidget
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 ::
 
@@ -105,15 +146,27 @@ overview of the whole process. Essentially, you write a custom class (usually
 QWidget, but really it can be any QWidget-like class such as QMainWindow,
 QDialog, etc.), then use the compiled Python code to access and interact with
 the layout you specified. The key here is that you *are not modifying the
-generated Python code*.
+generated Python code*. That means in our case that we don't want to mess with
+``template.py`` by hand. If you make changes to it, you now can no longer make
+changes to your UI from Qt Designer because re-generating the template will
+overwrite your changes.
 
 The nice thing about this workflow overall is that it cleans up your custom
 class code a lot, since you're not creating container layouts all over the
-place, specifying sizes, size policies, etc. (take a peek at ``template.py`` --
-even a trivial example is ugly). It just involves importing your template class
-(PyQt refers to it as the *form class*), instantiating it in your custom
-widget, and calling ``setupUi()``. You'll see that this is the first thing
-happening in the ``CustomWidget`` implementation found in ``application.py``.
+place, specifying sizes, size policies, etc.
+
+Our implementation is in ``application.py``. It starts out with importing Qt
+stuff so we can set up a QApplication and run it. We also *import the template
+module* so we have access to the template class (PyQt refers to it as the *form
+class*). We then write a custom QWidget implementation which instantiates the
+form class and calls its ``setupUi`` method. I typically assign the form class
+to an attribute called ``ui``. Once you call ``setupUi``, you now can access
+the items in your UI through the names they were given in Qt Designer.
+
+So in our example, we access the ``plotWidget`` attribute of the form class
+object, which is a pyqtgraph PlotWidget object. Now the pyqtgraph API applies,
+so we can plot some content and whatever else we need. In this case, we connect
+up the checkbox to a method that toggles mouse functionality on the PlotWidget.
 
 Once you have a class attribute representing your form class, you have access
 to all of the widgets in it, named according to the names you specify in Qt
@@ -128,6 +181,19 @@ elements specified by Designer rather than widgets you might add
 programmatically.*
 
 
+Other Notes
+===========
+
+Feel free to open an issue if anything here isn't clear.
+
+I originally wrote this in response to seeing questions on the `pyqtgraph
+mailing list`_ about using pyqtgraph functionality in an application designed
+with Qt Designer. It's not obvious at all that you can use the promote
+mechanism with PyQt (as opposed to C++ Qt), so I wrote this to help people out.
+Feel free to use these materials in a pull request to improve pyqtgraph
+documentation.
+
+
 .. _pyqtgraph: http://pyqtgraph.org/
 .. _PlotWidget: http://pyqtgraph.org/documentation/widgets/plotwidget.html?highlight=plotwidget#pyqtgraph.PlotWidget
 .. _pyqtgraph examples: https://github.com/pyqtgraph/pyqtgraph/tree/develop/examples
@@ -135,3 +201,4 @@ programmatically.*
 .. _promote: https://doc.qt.io/qt-4.8/designer-using-custom-widgets.html
 .. _pyuic: http://pyqt.sourceforge.net/Docs/PyQt4/designer.html#module-PyQt4.uic
 .. _using the generated code: http://pyqt.sourceforge.net/Docs/PyQt4/designer.html
+.. _pyqtgraph mailing list: https://groups.google.com/forum/#!forum/pyqtgraph

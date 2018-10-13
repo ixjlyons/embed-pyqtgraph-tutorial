@@ -1,5 +1,4 @@
-import argparse
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 
 # import the "form class" from your compiled UI
 from template import Ui_CustomWidget
@@ -30,25 +29,8 @@ class CustomWidget(QtGui.QWidget):
         self.ui.plotWidget.setMouseEnabled(x=enabled, y=enabled)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Show a pyqtgraph plot embedded in a PyQt UI.")
-    parser.add_argument('-s', '--screenshot', action='store_true',
-        help="Take a screenshot of the UI instead of running it.")
-    args = parser.parse_args()
-    return args
-
-
 if __name__ == '__main__':
-    args = parse_args()
-
     app = QtGui.QApplication([])
     widget = CustomWidget()
-
-    if args.screenshot:
-        pixmap = QtGui.QPixmap(widget.size())
-        widget.render(pixmap)
-        pixmap.save('screenshot.png')
-    else:
-        widget.show()
-        app.exec_()
+    widget.show()
+    app.exec_()
