@@ -168,17 +168,11 @@ object, which is a pyqtgraph PlotWidget object. Now the pyqtgraph API applies,
 so we can plot some content and whatever else we need. In this case, we connect
 up the checkbox to a method that toggles mouse functionality on the PlotWidget.
 
-Once you have a class attribute representing your form class, you have access
-to all of the widgets in it, named according to the names you specify in Qt
-Designer. In the simple example presented here, I am accessing the PlotWidget
-to plot some data, then connecting a check box to enable/disable the mouse on
-that PlotWidget.
-
-*Note: I prefer to explicitly set up the form class object as an attribute of
-the custom widget rather than using multiple inheritance to use the form class
-objects directly -- mostly because it's very clear when you're accessing UI
-elements specified by Designer rather than widgets you might add
-programmatically.*
+*Note: It is possible to make CustomWidget inherit from UI_CustomWidget (so
+you'd call ``self.setupUi()``), but I prefer to explicitly set up the form
+class object as an attribute of the custom widget -- mostly because it's very
+clear when you're accessing UI elements specified by Designer rather than
+widgets you might add programmatically.*
 
 
 Other Notes
@@ -198,7 +192,7 @@ documentation.
 .. _PlotWidget: http://pyqtgraph.org/documentation/widgets/plotwidget.html?highlight=plotwidget#pyqtgraph.PlotWidget
 .. _pyqtgraph examples: https://github.com/pyqtgraph/pyqtgraph/tree/develop/examples
 .. _embed pyqtgraph: http://pyqtgraph.org/documentation/how_to_use.html#embedding-widgets-inside-pyqt-applications
-.. _promote: https://doc.qt.io/qt-4.8/designer-using-custom-widgets.html
-.. _pyuic: http://pyqt.sourceforge.net/Docs/PyQt4/designer.html#module-PyQt4.uic
-.. _using the generated code: http://pyqt.sourceforge.net/Docs/PyQt4/designer.html
+.. _promote: http://doc.qt.io/qt-5/designer-using-custom-widgets.html
+.. _pyuic: http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#the-uic-module
+.. _using the generated code: http://pyqt.sourceforge.net/Docs/PyQt5/designer.html
 .. _pyqtgraph mailing list: https://groups.google.com/forum/#!forum/pyqtgraph
