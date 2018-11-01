@@ -125,7 +125,7 @@ Also notice the import line at the bottom of the file:
 
 .. code-block:: python
 
-    from pyqtgraph impot PlotWidget
+    from pyqtgraph import PlotWidget
 
 This all comes straight from that bottom section of the ``template.ui`` file,
 where we specified in Qt Designer that we have a custom item of a specific
@@ -147,9 +147,9 @@ QWidget, but really it can be any QWidget-like class such as QMainWindow,
 QDialog, etc.), then use the compiled Python code to access and interact with
 the layout you specified. The key here is that you *are not modifying the
 generated Python code*. That means in our case that we don't want to mess with
-``template.py`` by hand. If you make changes to it, you now can no longer make
+``template.py`` by hand. If you make changes to it, you can no longer make
 changes to your UI from Qt Designer because re-generating the template will
-overwrite your changes.
+overwrite your changes!
 
 The nice thing about this workflow overall is that it cleans up your custom
 class code a lot, since you're not creating container layouts all over the
@@ -189,7 +189,7 @@ documentation.
 
 
 .. _pyqtgraph: http://pyqtgraph.org/
-.. _PlotWidget: http://pyqtgraph.org/documentation/widgets/plotwidget.html?highlight=plotwidget#pyqtgraph.PlotWidget
+.. _PlotWidget: http://pyqtgraph.org/documentation/widgets/plotwidget.html
 .. _pyqtgraph examples: https://github.com/pyqtgraph/pyqtgraph/tree/develop/examples
 .. _embed pyqtgraph: http://pyqtgraph.org/documentation/how_to_use.html#embedding-widgets-inside-pyqt-applications
 .. _promote: http://doc.qt.io/qt-5/designer-using-custom-widgets.html
